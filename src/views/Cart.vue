@@ -173,7 +173,7 @@ async function checkout() {
 
   try {
     await orderStore.addOrder(order);
-    clearCart();
+    // clearCart();
     alert("🎉 Đặt hàng thành công!");
     router.push("/orders");
   } catch (err) {

@@ -1,4 +1,9 @@
-// server.js (sạch, không nhân đôi route)
+// // server.js (sạch, không nhân đôi route)
+// "json-server": "^1.0.0-beta.3",
+// "express": "^5.1.0",
+// "body-parser": "^2.2.0",
+
+
 const jsonServer = require("json-server");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
@@ -309,7 +314,7 @@ server.use((req, res, next) => {
   }
 });
 
-// mount router (json-server default routes)
+// // mount router (json-server default routes)
 server.use(router);
 
 server.listen(PORT, () => {

@@ -14,7 +14,7 @@ export const useAuthStore = defineStore("auth", {
 
   actions: {
     async login(username, password) {
-      try {
+      try {  
         const { data: users } = await axios.get("http://localhost:3000/users");
         const found = users.find(
           (u) => u.username === username && u.password === password
