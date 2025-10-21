@@ -318,5 +318,5 @@ server.use((req, res, next) => {
 server.use(router);
 
 server.listen(PORT, () => {
-  console.log(`🚀 Server chạy tại http://localhost:${PORT}`);
+  console.log(`🚀 Server listen in http://localhost:${PORT}`);
 });
