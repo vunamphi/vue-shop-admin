@@ -18,37 +18,39 @@ const middlewares = jsonServer.defaults();
 server.use(middlewares);
 server.use(jsonServer.bodyParser);
 
-const SECRET = "dev-only-secret";
+const SECRET = ;
 const PORT = process.env.PORT || 3001;
 
 // Email config
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
+  host: process.env.MAILER_HOST,
+  port: process.env.MAILER_PORT ?? 587,
   secure: false,
   auth: {
-    user: process.env.user,
-    pass: process.env.pass,
+    user: process.env.MAILER_USER,
+    pass: process.env.MAIL_PASS,
   },
 });
 
 // VNPay config
-const VNP_TMN_CODE = process.env.vnp_TmnCode || "20JJYP79";
-const VNP_HASH_SECRET =
-  process.env.vnp_HashSecret || "PKTMMJ47ZVTFPETV9PRT5IIKYZE2WXTS";
-const VNP_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-const VNP_RETURN_URL =
-  process.env.vnp_ReturnUrl || "http://localhost:5173/thankyou";
+const VNP_TMN_CODE = process.env.VNP_TMN_CODE,
+  VNP_HASH_SECRET = process.env.VNP_HASH_SECRET,
+  VNP_URL = process.env.VNP_URL,
+  VNP_HOST = process.env.VNP_HOST,
+  VNP_RETURN_URL = process.env.VNP_RETURN_URL || "http://localhost:5173/thankyou";
 
 const vnpay = new VNPay({
   tmnCode: VNP_TMN_CODE,
   secureSecret: VNP_HASH_SECRET,
-  vnpayHost: "https://sandbox.vnpayment.vn",
+  vnpayHost: VNP_HOST,
   testMode: true,
   hashAlgorithm: "SHA512",
   enableLog: true,
   loggerFn: ignoreLogger,
-  endpoints: { paymentEndpoint: "paymentv2/vpcpay.html" },
+  endpoints: {
+    paymentEndpoint: "paymentv2/vpcpay.html",
+    getBankListEndpoint: 'qrpayauth/api/merchant/get_bank_list',
+  },
 });
 
 // Auth helpers
