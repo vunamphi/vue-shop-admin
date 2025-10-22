@@ -18,7 +18,7 @@ const middlewares = jsonServer.defaults();
 server.use(middlewares);
 server.use(jsonServer.bodyParser);
 
-const SECRET = ;
+const SECRET = process.env.JWT_SECRET;
 const PORT = process.env.PORT || 3001;
 
 // Email config
