@@ -30,6 +30,11 @@ const routes = [
   { path: "/profile", component: Profile, meta: { requiresAuth: true } },
   { path: "/test", component: Test, meta: { requiresAuth: true } },
   {
+    path: '/thankyou',
+    name: 'ThankYou',
+    component: () => import('@/views/ThankYou.vue')
+  },
+  {
     path: "/dashboard",
     component: Dashboard,
     meta: { requiresAuth: true, requiresAdmin: true },

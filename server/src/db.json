@@ -28,12 +28,6 @@
       "desiredProducts": [
         "Điện thoại"
       ]
-    },
-    {
-      "id": "5a921",
-      "username": "test",
-      "password": "123",
-      "role": "user"
     }
   ],
   "categories": [
@@ -611,7 +605,7 @@
       "createdAt": "2025-10-22T17:21:15.431Z"
     },
     {
-      "id": "1761154921127",
+      "id": "1761154647257",
       "user": "phi",
       "cart": [
         {
@@ -644,43 +638,7 @@
       "totalPrice": 60980000,
       "paymentMethod": "cod",
       "status": "Chờ giao hàng",
-      "createdAt": "2025-10-22T17:42:01.127Z"
-    },
-    {
-      "id": "1761155041079",
-      "user": "phi",
-      "cart": [
-        {
-          "id": "4",
-          "name": "Oppo Find X7 Ultra",
-          "price": 21990000,
-          "description": "Trang bị 4 camera 50MP, màn hình AMOLED 120Hz, thiết kế sang trọng.",
-          "images": [
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZsWmi96QluPp8vOyLsikQ0zPXv5R-4Ifs9w&s",
-            "data:image/jpeg;base64,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"
-          ],
-          "category_id": 1,
-          "stock": 100,
-          "quantity": 1
-        },
-        {
-          "id": "6",
-          "name": "MacBook Pro M3 2024",
-          "price": 38990000,
-          "description": "MacBook Pro M3 hiệu năng vượt trội, màn hình Liquid Retina XDR, pin 22 giờ.",
-          "images": [
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6h6kXJ0OhXk4jt9hwNp2fxrrDNYGPY-Tm6Q&s",
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5kkrTlCvy0yfSPvpyyJvxGXH-fLdra4dCwA&s"
-          ],
-          "category_id": 2,
-          "stock": 100,
-          "quantity": 1
-        }
-      ],
-      "totalPrice": 60980000,
-      "paymentMethod": "vnpay",
-      "status": "Chờ thanh toán",
-      "createdAt": "2025-10-22T17:44:01.079Z"
+      "createdAt": "2025-10-22T17:37:27.257Z"
     }
   ],
   "coupons": [

@@ -1,72 +1,77 @@
 // 📁 src/store/order.js
 import { defineStore } from "pinia";
-import axios from "axios";
+import axios from "../api/api";
 
-const BASE = "http://localhost:3000"; // <-- ensure matches server PORT
 
 export const useOrderStore = defineStore("order", {
   state: () => ({
     orders: [],
     loading: false,
+    currentOrderId: null, // ← MỚI: lưu orderId khi VNPay
   }),
 
   actions: {
-    async fetchAllOrders() {
+    async addOrder(order) {
       this.loading = true;
       try {
-        const res = await axios.get(`${BASE}/orders`);
-        this.orders = res.data;
-      } catch (err) {
-        console.error("❌ Lỗi tải tất cả đơn hàng:", err);
+        const response = await axios.post(`/orders`, order);
+        const data = response.data;
+
+        console.log("📦 Order response:", data);
+
+        // VNPay: redirect ngay
+        if (data?.paymentUrl) {
+          this.currentOrderId = data.orderId || data.id; // ← Lưu orderId
+          window.location.href = data.paymentUrl;
+          return { type: 'vnpay', orderId: this.currentOrderId };
+        }
+
+        // COD: lưu order vào state
+        this.orders.unshift(data); // Thêm đầu danh sách
+        return { type: 'cod', order: data };
+
+      } catch (error) {
+        console.error("❌ Lỗi khi thêm đơn hàng:", error.response?.data || error);
+        throw error;
       } finally {
         this.loading = false;
       }
     },
-
     async fetchUserOrders(username) {
       this.loading = true;
       try {
-        const res = await axios.get(`${BASE}/orders?user=${encodeURIComponent(username)}`);
-        this.orders = res.data;
-      } catch (err) {
-        console.error("❌ Lỗi tải đơn hàng người dùng:", err);
+        const encodedUser = encodeURIComponent(username);
+        const response = await axios.get(`/orders?user=${encodedUser}`);
+        this.orders = response.data;
+      } catch (error) {
+        console.error("❌ Lỗi khi tải đơn hàng của người dùng:", error);
       } finally {
         this.loading = false;
       }
     },
 
-    async addOrder(order) {
+    async updateStatus(orderId, newStatus) {
       try {
-        const res = await axios.post(`${BASE}/orders`, order);
-        // If server returns {paymentUrl} for vnpay, frontend should handle that case
-        if (res.data && res.data.paymentUrl) {
-          return res.data; // caller handles payment redirect
-        }
-        // otherwise res.data is order object
-        this.orders.push(res.data);
-        return res.data;
-      } catch (err) {
-        console.error("❌ Lỗi thêm đơn hàng:", err);
-        throw err;
-      }
-    },
+        const response = await axios.patch(`/orders/${orderId}`, {
+          status: newStatus,
+        });
 
-    async updateStatus(id, status) {
-      try {
-        const res = await axios.patch(`${BASE}/orders/${id}`, { status });
-        const updatedOrder = res.data.order || res.data;
-        const idx = this.orders.findIndex((o) => String(o.id) === String(id));
-        if (idx !== -1) {
-          this.orders[idx] = updatedOrder;
+        const updatedOrder = response.data.order || response.data;
+
+        const index = this.orders.findIndex((o) => String(o.id) === String(orderId));
+        if (index !== -1) {
+          this.orders[index] = updatedOrder;
         } else {
           this.orders.push(updatedOrder);
         }
-        alert(`✅ Cập nhật trạng thái đơn hàng #${id} thành "${status}"`);
+
+        alert(`✅ Đã cập nhật trạng thái đơn hàng #${orderId} thành "${newStatus}"`);
         return updatedOrder;
-      } catch (err) {
-        console.error("❌ Lỗi cập nhật trạng thái:", err);
-        throw err;
+      } catch (error) {
+        console.error("❌ Lỗi khi cập nhật trạng thái:", error);
+        throw error;
       }
     },
   },
 });
+
