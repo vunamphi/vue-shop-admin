@@ -173,9 +173,9 @@ async function checkout() {
 
   try {
      await orderStore.addOrder(order);
-    // clearCart();
+    clearCart();
     alert("🎉 Đặt hàng thành công!");
-    // router.push("/orders");
+    router.push("/orders");
   } catch (err) {
     console.error("❌ Lỗi đặt hàng:", err);
   }

@@ -6,8 +6,8 @@ const orderRoutes = (server) => {
 
   server.post("/orders", async (req, res) => {
     try {
-      const { user, cart, totalPrice, paymentMethod } = req.body;
-      if (!user || !cart || !totalPrice)
+      const { user, cart, totalPrice, paymentMethod,userId } = req.body;
+      if (!user || !cart || !totalPrice || !userId)
         return res.status(400).json({ error: "Thiếu thông tin" });
 
 
@@ -22,6 +22,7 @@ const orderRoutes = (server) => {
       const orderId = Date.now().toString();
       const order = {
         id: orderId, user, cart, totalPrice, paymentMethod,
+        userId: userId,
         status: paymentMethod === "cod" ? "Chờ giao hàng" : "Chờ thanh toán",
         createdAt: new Date().toISOString(),
       };
@@ -77,27 +78,65 @@ const orderRoutes = (server) => {
   server.get("/orders", (req, res) => {
     const { user } = req.query;
     const orders = server.db.get("orders").value();
-    if (user) return res.json(orders.filter(o => o.user === user));
+    console.log(user);
+    
+    const users = server.db.get("users").value();
+    const isLoadALl = users.filter(u => {
+      return (u.id === user && u?.role === "admin")
+    });
+    
+    if (user && !isLoadALl) return res.json(orders.filter(o => o.user === user));
     res.json(orders);
   });
 
+  // server.patch("/orders/:id", async (req, res) => {
+  //   const { id } = req.params;
+  //   const { status } = req.body;
+    
+  //   const order = server.db.get("orders").find({ id }).value();
+  //   if (!order) return res.status(404).json({ message: "Không tìm thấy" });
+
+  //   server.db.get("orders").find({ id }).assign({ status }).value();
+    
+  //   // Async save
+  //   (async () => {
+  //     const state = server.db.getState();
+  //     await server.asyncWrite(state);
+  //   })();
+
+  //   res.json({ message: "Cập nhật OK", order });
+  // });
   server.patch("/orders/:id", async (req, res) => {
+  try {
     const { id } = req.params;
     const { status } = req.body;
-    
+
+    if (!status) {
+      return res.status(400).json({ error: "Thiếu trạng thái" });
+    }
+
     const order = server.db.get("orders").find({ id }).value();
-    if (!order) return res.status(404).json({ message: "Không tìm thấy" });
+    if (!order) {
+      return res.status(404).json({ error: "Đơn hàng không tìm thấy" });
+    }
 
-    server.db.get("orders").find({ id }).assign({ status }).value();
-    
-    // Async save
-    (async () => {
-      const state = server.db.getState();
-      await server.asyncWrite(state);
-    })();
+    // Gán trạng thái mới
+    server.db.get("orders").find({ id }).assign({ status }).write();  
+    // .write() ngay để chắc state được lưu nếu dùng lowdb/memory DB  
 
-    res.json({ message: "Cập nhật OK", order });
-  });
+    // Lấy lại đơn hàng đã cập nhật
+    const updatedOrder = server.db.get("orders").find({ id }).value();
+
+    // Trả về theo client mong đợi
+    return res.json({ order: updatedOrder });
+  } catch (err) {
+    console.error("❌ Lỗi khi cập nhật đơn hàng:", err);
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+
+
 };
 
 module.exports = orderRoutes;

@@ -37,14 +37,15 @@ export const useOrderStore = defineStore("order", {
         this.loading = false;
       }
     },
-    async fetchUserOrders(username) {
+    async fetchUserOrders(userId) {
       this.loading = true;
       try {
-        const encodedUser = encodeURIComponent(username);
-        const response = await axios.get(`/orders?user=${encodedUser}`);
+        // Giả sử API: /orders?userId=...
+        const response = await axios.get(`/orders?userId=${encodeURIComponent(userId)}`);
+        // Giả lập: response.data = [ {...}, {...} ]
         this.orders = response.data;
       } catch (error) {
-        console.error("❌ Lỗi khi tải đơn hàng của người dùng:", error);
+        console.error("Fetch orders error:", error);
       } finally {
         this.loading = false;
       }

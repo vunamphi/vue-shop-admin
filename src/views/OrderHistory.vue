@@ -2,7 +2,7 @@
   <div class="container py-5">
     <h2 class="text-center mb-4 fw-bold">🧾 Lịch Sử Đơn Hàng</h2>
 
-    <div v-if="orderStore.loading" class="text-center text-muted">
+    <div v-if="loading" class="text-center text-muted">
       Đang tải dữ liệu...
     </div>
 
@@ -42,19 +42,34 @@
 </template>
 
 <script setup>
+// import { onMounted } from "vue";
+// import { useOrderStore } from "@/store/order";
+
+// const orderStore = useOrderStore();
+// const { orders } = orderStore;
+
+// onMounted(async () => {
+//   const user = JSON.parse(localStorage.getItem("user"));
+//   if (user && user.id) {
+//     await orderStore.fetchUserOrders(user.id);
+//   } else {
+//     alert("⚠️ Vui lòng đăng nhập để xem lịch sử đơn hàng!");
+//   }
+//   console.log(orders.length);
+  
+// });
+
 import { onMounted } from "vue";
 import { useOrderStore } from "@/store/order";
+import { storeToRefs } from "pinia";
 
 const orderStore = useOrderStore();
-const { orders } = orderStore;
+const { orders, loading } = storeToRefs(orderStore);
 
 onMounted(async () => {
-  const user = JSON.parse(localStorage.getItem("user"));
-  if (user && user.id) {
-    await orderStore.fetchUserOrders(user.id);
-  } else {
-    alert("⚠️ Vui lòng đăng nhập để xem lịch sử đơn hàng!");
-  }
+  const user = { id: "user123" };  // giả sử
+  await orderStore.fetchUserOrders(user.id);
+  console.log("After fetch → orders:", orders.value);
 });
 
 function formatPrice(value) {
